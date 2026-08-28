@@ -1,7 +1,8 @@
 # crm-login-prototype · 部署配置
 
-> 本仓库用于打通 **Git → Gitee Pages（国内）+ Vercel（备用）** 部署链路。  
-> 当前仅包含部署测试页，原型内容后续再添加。
+> 本仓库用于打通 **Git → GitHub Pages / Vercel** 部署链路，并提供管理端登录 + 用户管理 Demo。  
+> 本地打开 `index.html`，或部署后访问 Pages 地址即可分享给同事。  
+> 演示账号 `18981739366` / 密码 `Admin@2026`（验证码看登录页右侧图片）。
 
 ---
 
