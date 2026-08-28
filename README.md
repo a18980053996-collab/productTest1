@@ -1,7 +1,7 @@
 # crm-login-prototype · 部署配置
 
-> 本仓库用于打通 **Git → GitHub Pages / Vercel** 部署链路，并提供管理端登录 + 用户管理 Demo。  
-> 本地打开 `index.html`，或部署后访问 Pages 地址即可分享给同事。  
+> 本仓库用于打通 **Git → GitHub Pages / Vercel** 部署链路，并用文件夹区分多个 PRD 原型。  
+> 根目录 `index.html` 是需求清单；登录 + 用户管理 Demo 在 `prd-login-user/`。  
 > 演示账号 `18981739366` / 密码 `Admin@2026`（验证码看登录页右侧图片）。
 
 ---

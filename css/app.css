@@ -492,6 +492,69 @@ tr.clickable:hover td { background: #f8fafc; }
 }
 .login-card .prd-tips { margin-top: 16px; }
 
+.hub-back {
+  display: inline-block;
+  margin-top: 14px;
+  color: rgba(255,255,255,.8);
+  text-decoration: none;
+  font-size: 13px;
+}
+.hub-back:hover { color: #fff; }
+
+.hub-body { background: var(--bg); }
+.hub {
+  min-height: 100%;
+  padding: 48px 24px 64px;
+}
+.hub-wrap { max-width: 760px; margin: 0 auto; }
+.hub-title {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+.hub-desc {
+  margin: 0 0 24px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.prd-list { display: grid; gap: 12px; }
+.prd-card {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  text-decoration: none;
+  color: inherit;
+}
+.prd-card:hover { border-color: var(--primary); }
+.prd-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.prd-card p {
+  margin: 0 0 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.prd-card-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+.prd-tag {
+  font-size: 12px;
+  color: #1d4ed8;
+  background: var(--primary-soft);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
 @media (max-width: 900px) {
   .login-page { grid-template-columns: 1fr; }
   .login-hero { min-height: 220px; padding: 28px 24px; }
