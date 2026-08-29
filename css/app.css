@@ -507,6 +507,32 @@ tr.clickable:hover td { background: #f8fafc; }
   padding: 48px 24px 64px;
 }
 .hub-wrap { max-width: 760px; margin: 0 auto; }
+.hub-wrap-wide { max-width: 840px; }
+.hub-subtitle {
+  margin: 36px 0 8px;
+  font-size: 20px;
+}
+.dl-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.dl-row .btn { text-decoration: none; display: inline-flex; align-items: center; }
+.flow-preview {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  overflow: auto;
+}
+.flow-preview img {
+  display: block;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  height: auto;
+}
 .hub-title {
   margin: 0 0 8px;
   font-size: 28px;

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 980" width="720" height="980">
+  <title>Login auth flow</title>
+  <style>
+    .box { fill: #fff; stroke: #3b82f6; stroke-width: 1.6; }
+    .start { fill: #eff6ff; stroke: #3b82f6; }
+    .ok { fill: #ecfdf5; stroke: #10b981; }
+    .err { fill: #fff7ed; stroke: #f97316; }
+    .stop { fill: #fef2f2; stroke: #ef4444; }
+    .label { font: 14px sans-serif; fill: #1f2937; text-anchor: middle; }
+    .small { font: 12px sans-serif; fill: #6b7280; text-anchor: middle; }
+    .arrow { stroke: #64748b; stroke-width: 1.6; fill: none; marker-end: url(#arrow); }
+    .left { text-anchor: start; }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect x="240" y="24" width="240" height="56" rx="28" class="start"/>
+  <text x="360" y="58" class="label">开始：打开登录页</text>
+  <line x1="360" y1="80" x2="360" y2="118" class="arrow"/>
+  <rect x="200" y="120" width="320" height="64" rx="8" class="box"/>
+  <text x="360" y="148" class="label">输入账号、密码、验证码</text>
+  <text x="360" y="168" class="small">点击「账号登录」</text>
+  <line x1="360" y1="184" x2="360" y2="222" class="arrow"/>
+  <polygon points="360,224 500,280 360,336 220,280" class="box"/>
+  <text x="360" y="276" class="label">验证码是否正确？</text>
+  <text x="360" y="294" class="small">否则刷新验证码</text>
+  <line x1="500" y1="280" x2="600" y2="280" class="arrow"/>
+  <rect x="604" y="252" width="96" height="56" rx="8" class="err"/>
+  <text x="652" y="276" class="small">提示验证码错误</text>
+  <text x="652" y="294" class="small">抖动按钮</text>
+  <path d="M652,308 L652,152 520,152" class="arrow"/>
+  <line x1="360" y1="336" x2="360" y2="374" class="arrow"/>
+  <text x="376" y="360" class="small left">是</text>
+  <polygon points="360,376 500,432 360,488 220,432" class="box"/>
+  <text x="360" y="428" class="label">账号密码是否匹配？</text>
+  <line x1="500" y1="432" x2="600" y2="432" class="arrow"/>
+  <rect x="580" y="392" width="124" height="80" rx="8" class="err"/>
+  <text x="642" y="420" class="small">账号或密码错误 n/5</text>
+  <text x="642" y="438" class="small">刷新验证码</text>
+  <text x="642" y="456" class="small">满 5 次则禁用</text>
+  <line x1="360" y1="488" x2="360" y2="526" class="arrow"/>
+  <text x="376" y="512" class="small left">是</text>
+  <polygon points="360,528 500,584 360,640 220,584" class="box"/>
+  <text x="360" y="580" class="label">当日错误是否已满 5 次？</text>
+  <line x1="500" y1="584" x2="600" y2="584" class="arrow"/>
+  <rect x="580" y="556" width="124" height="56" rx="8" class="stop"/>
+  <text x="642" y="580" class="small">账号已禁用</text>
+  <text x="642" y="598" class="small">联系管理员</text>
+  <line x1="360" y1="640" x2="360" y2="678" class="arrow"/>
+  <text x="376" y="664" class="small left">否</text>
+  <rect x="210" y="680" width="300" height="56" rx="8" class="ok"/>
+  <text x="360" y="714" class="label">登录成功，进入用户管理</text>
+  <line x1="360" y1="736" x2="360" y2="774" class="arrow"/>
+  <rect x="210" y="776" width="300" height="64" rx="8" class="box"/>
+  <text x="360" y="804" class="label">查询 / 分页 / 查看详情</text>
+  <text x="360" y="824" class="small">档案状态：未填写 / 已填写 / 已完成</text>
+  <line x1="360" y1="840" x2="360" y2="878" class="arrow"/>
+  <rect x="240" y="880" width="240" height="56" rx="28" class="start"/>
+  <text x="360" y="914" class="label">结束</text>
+</svg>

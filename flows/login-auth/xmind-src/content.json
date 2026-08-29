@@ -1,0 +1,74 @@
+[
+  {
+    "id": "sheet-login-auth",
+    "class": "sheet",
+    "title": "登录鉴权",
+    "rootTopic": {
+      "id": "root",
+      "class": "topic",
+      "title": "登录鉴权流程",
+      "structureClass": "org.xmind.ui.logic.right",
+      "children": {
+        "attached": [
+          {
+            "id": "front",
+            "title": "前台",
+            "children": {
+              "attached": [
+                { "id": "front-1", "title": "打开登录页" },
+                { "id": "front-2", "title": "输入账号 / 密码 / 验证码" },
+                { "id": "front-3", "title": "点击账号登录" }
+              ]
+            }
+          },
+          {
+            "id": "check",
+            "title": "校验",
+            "children": {
+              "attached": [
+                {
+                  "id": "check-1",
+                  "title": "验证码是否正确",
+                  "children": {
+                    "attached": [
+                      { "id": "check-1a", "title": "否：提示错误并刷新验证码" }
+                    ]
+                  }
+                },
+                {
+                  "id": "check-2",
+                  "title": "账号密码是否匹配",
+                  "children": {
+                    "attached": [
+                      { "id": "check-2a", "title": "否：账号或密码错误 n/5" }
+                    ]
+                  }
+                },
+                {
+                  "id": "check-3",
+                  "title": "当日错误是否满 5 次",
+                  "children": {
+                    "attached": [
+                      { "id": "check-3a", "title": "是：账号禁用，联系管理员" }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "result",
+            "title": "结果",
+            "children": {
+              "attached": [
+                { "id": "result-1", "title": "成功：进入用户管理" },
+                { "id": "result-2", "title": "查询 / 分页 / 详情" },
+                { "id": "result-3", "title": "暂不做找回密码" }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+]
