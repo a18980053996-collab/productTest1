@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PRD 原型目录 · 公考上岸</title>
+  <title>PRD 需求目录 · 公考上岸</title>
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body class="hub-body">
@@ -11,54 +11,62 @@
     <div class="hub-wrap">
       <div class="login-brand" style="margin-bottom:20px">
         <div class="mark">公</div>
-        公考上岸 · PRD 原型目录
+        公考上岸 · PRD 需求目录
       </div>
-      <h1 class="hub-title">需求原型清单</h1>
-      <p class="hub-desc">每个需求一个文件夹，分享时把对应链接发给同事。根地址是本目录页，不是某个具体 PRD。</p>
+      <h1 class="hub-title">需求清单</h1>
+      <p class="hub-desc">一个需求一个文件夹。点卡片进需求入口，再选原型或流程图。需求多了可用下方搜索。</p>
+      <input id="reqSearch" class="hub-search" type="search" placeholder="搜索需求名称、文件夹、关键词">
 
-      <div class="prd-list">
-        <a class="prd-card" href="prd-login-user/">
-          <div class="prd-card-top">
-            <strong>登录 + 用户管理</strong>
-            <span class="prd-tag">进行中</span>
+      <div class="prd-list" id="reqList">
+        <article class="prd-card req-card" data-search="登录 用户管理 鉴权 原型 流程图 prd-login-user">
+          <a class="req-main" href="prd-login-user/">
+            <div class="prd-card-top">
+              <strong>登录 + 用户管理</strong>
+              <span class="prd-tag">进行中</span>
+            </div>
+            <p>管理端登录、用户列表、详情；同目录含登录鉴权流程图。</p>
+            <div class="prd-card-meta">
+              <span>prd-login-user/</span>
+              <span>PRD v0.2 · 2026-05-18</span>
+            </div>
+          </a>
+          <div class="req-links">
+            <a href="prd-login-user/ui/">打开原型</a>
+            <a href="prd-login-user/flows/login-auth/">打开流程图</a>
           </div>
-          <p>管理端账号登录、用户列表筛选分页、用户详情。含黄色 TIPS 需求记录。</p>
-          <div class="prd-card-meta">
-            <span>文件夹 prd-login-user/</span>
-            <span>PRD v0.2 · 2026-05-18</span>
-          </div>
-        </a>
+        </article>
       </div>
 
-      <h2 class="hub-subtitle">流程图 / 系统图</h2>
-      <p class="hub-desc">页面上预览 SVG；下载 .xmind / .mm 可导入 ProcessOn 或 XMind。</p>
-      <div class="prd-list">
-        <a class="prd-card" href="flows/login-auth/">
-          <div class="prd-card-top">
-            <strong>登录鉴权业务流程</strong>
-            <span class="prd-tag">示例</span>
-          </div>
-          <p>登录校验、错误次数、进入用户管理。网页可看图，文件可导入导图软件。</p>
-          <div class="prd-card-meta">
-            <span>文件夹 flows/login-auth/</span>
-            <span>含 preview.svg · login-auth.xmind · login-auth.mm</span>
-          </div>
-        </a>
-      </div>
+      <p id="reqEmpty" class="hub-desc hidden">没有匹配的需求，试试别的关键词。</p>
 
       <aside class="prd-tips" style="margin-top:24px">
         <div class="tips-head">
-          <span class="tips-label">TIPS · 如何新增一个需求原型</span>
-          <span class="tips-meta">仓库约定</span>
+          <span class="tips-label">TIPS · 仓库约定</span>
+          <span class="tips-meta">一个需求一个文件夹</span>
         </div>
         <ol>
-          <li>新建文件夹，例如 <code>prd-class-manage/</code>，里面放该需求的 <code>index.html</code>。</li>
-          <li>公共样式继续引用 <code>../css/app.css</code>，需要交互再加自己的 js。</li>
-          <li>回到本页增加一张卡片，<code>href</code> 指向新文件夹。</li>
-          <li>发给同事的是文件夹链接，例如 <code>.../productTest1/prd-class-manage/</code>，不要只发根地址。</li>
+          <li>新建 <code>prd-需求名/</code>，入口页 <code>index.html</code> 同时链到原型和流程图。</li>
+          <li>原型放 <code>ui/</code>，流程图放 <code>flows/图名/</code>（预览 SVG + .xmind / .mm）。</li>
+          <li>回到本页加一张卡片，并补上「打开原型 / 打开流程图」两个链接。</li>
+          <li>分享需求发 <code>.../prd-需求名/</code>；只要某一页再发子路径。</li>
         </ol>
       </aside>
     </div>
   </div>
+  <script>
+    const input = document.getElementById("reqSearch");
+    const cards = [...document.querySelectorAll(".req-card")];
+    const empty = document.getElementById("reqEmpty");
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      let shown = 0;
+      cards.forEach((card) => {
+        const hit = !q || card.dataset.search.toLowerCase().includes(q);
+        card.classList.toggle("hidden", !hit);
+        if (hit) shown += 1;
+      });
+      empty.classList.toggle("hidden", shown > 0);
+    });
+  </script>
 </body>
 </html>
