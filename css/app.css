@@ -550,7 +550,7 @@ tr.clickable:hover td { background: #f8fafc; }
   border-radius: 10px;
   padding: 18px 20px;
   text-decoration: none;
-  color: inherit;
+  color: #1f2937;
 }
 .prd-card:hover { border-color: var(--primary); }
 .prd-card-top {
@@ -575,7 +575,7 @@ tr.clickable:hover td { background: #f8fafc; }
 }
 .prd-tag {
   font-size: 12px;
-  font-weight: 650;
+  font-weight: 600;
   padding: 2px 8px;
   border-radius: 999px;
   white-space: nowrap;
@@ -588,10 +588,11 @@ tr.clickable:hover td { background: #f8fafc; }
   color: #15803d;
   background: #ecfdf5;
 }
-.req-id {
+.req-id,
+a.req-main .req-id {
   color: #2563eb;
   font-size: 13px;
-  font-weight: 650;
+  font-weight: 600;
   margin-bottom: 4px;
 }
 .req-staff {
@@ -616,8 +617,16 @@ tr.clickable:hover td { background: #f8fafc; }
   display: block;
   padding: 18px 20px 12px;
   text-decoration: none;
-  color: inherit;
+  color: #1f2937;
 }
+.req-title {
+  display: inline-block;
+  color: #111827;
+  font-weight: 700;
+  font-size: 16px;
+  text-decoration: none;
+}
+.req-title:hover { color: #2563eb; }
 .req-links {
   display: flex;
   gap: 16px;
