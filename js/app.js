@@ -2,72 +2,9 @@ const DEMO_ACCOUNT = "18981739366";
 const DEMO_PASSWORD = "Admin@2026";
 const AUTH_KEY = "crm-demo-auth";
 const FAIL_KEY = "crm-demo-fail";
+const ENTRY_KEY = "crm-demo-entry";
 
-const NICKS = [
-  "闪闪闪星星星星",
-  "亮晶晶晶晶晶晶",
-  "塔马塔夫夫夫夫",
-  "闲云野鹤闲云野",
-  "天外飞仙仙仙仙",
-  "北冥有鱼",
-  "青云直上",
-  "行则将至",
-  "一苇渡江",
-  "星河入梦"
-];
-const PHONES = [
-  "13681739366",
-  "18981739366",
-  "13481739366",
-  "13281739366",
-  "18681739366",
-  "13800138000",
-  "15921778821",
-  "17712345678",
-  "13155556666",
-  "15088889999"
-];
-const ARCHIVES = ["待填写", "待填写", "待填写", "已填写", "已完成"];
-
-function pad(n) {
-  return String(n).padStart(3, "0");
-}
-
-function buildUsers() {
-  const users = [];
-  for (let i = 1; i <= 35; i += 1) {
-    const archive = ARCHIVES[(i - 1) % ARCHIVES.length];
-    const filled = archive !== "待填写";
-    const done = archive === "已完成";
-    users.push({
-      id: `UX202607${pad(i)}`,
-      nick: NICKS[(i - 1) % NICKS.length],
-      phone: PHONES[(i - 1) % PHONES.length],
-      reg: i <= 5 ? "2026/02/23 14:00" : `2026/0${(i % 8) + 1}/${String((i % 27) + 1).padStart(2, "0")} 09:12`,
-      last: i <= 5 ? "2026/12/23 14:00" : `2026/08/${String((i % 20) + 1).padStart(2, "0")} 18:30`,
-      archive,
-      lastLoginFull: "2026-08-05 14:25:19",
-      ip: "162.256.258.254",
-      region: "四川省/成都市/高新区",
-      system: i % 2 ? "Android 5.0" : "iOS 18",
-      name: filled ? "张三" : "-",
-      gender: filled ? "男" : "-",
-      nation: filled ? "汉族" : "-",
-      education: filled ? "大学本科" : "-",
-      major: filled ? "管理类/工商管理类/国际商务" : "-",
-      cert: filled ? "管理类/国际商务" : "-",
-      politics: filled ? "中共党员(含预备党员)" : "-",
-      times: "首次备考",
-      direction: "国考省考",
-      identity: "应届生",
-      special: done ? "大学生志愿服务西部计划" : "-",
-      city: done ? "浙江省/金华市" : "-"
-    });
-  }
-  return users;
-}
-
-const ALL_USERS = buildUsers();
+const ALL_USERS = window.ALL_DEMO_USERS || [];
 
 const state = {
   captcha: "",
@@ -91,6 +28,7 @@ function showToast(text, ok) {
   el.classList.add("show");
   setTimeout(() => el.classList.remove("show"), 1600);
 }
+window.showToast = showToast;
 
 function randomCaptcha() {
   const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
@@ -158,39 +96,92 @@ function showLogin() {
   randomCaptcha();
 }
 
-function showApp(page) {
+function storeEntryFromUrl() {
+  const params = new URLSearchParams(location.search);
+  const entry = params.get("entry") || (params.get("landing") === "detail" ? "users" : "");
+  if (!entry && !params.get("landing")) return;
+  sessionStorage.setItem(
+    ENTRY_KEY,
+    JSON.stringify({
+      module: entry || "users",
+      landing: params.get("landing") || "",
+      tab: params.get("tab") || "",
+      menu: params.get("menu") || "",
+      sub: params.get("sub") || "",
+      id: params.get("id") || ""
+    })
+  );
+}
+
+function readEntry() {
+  try {
+    return JSON.parse(sessionStorage.getItem(ENTRY_KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function applyEntryRoute() {
+  const entry = readEntry();
+  if (!entry) {
+    goPage("users");
+    return;
+  }
+  if (entry.landing === "detail") {
+    goPage("detail", entry.id || ALL_USERS[0]?.id);
+    return;
+  }
+  if (entry.module === "class") {
+    goPage("class", { tab: entry.tab || "students" });
+    return;
+  }
+  if (entry.module === "notice") {
+    goPage("notice", { menu: entry.menu || "list", sub: entry.sub || "normal" });
+    return;
+  }
+  goPage(entry.module === "users" ? "users" : entry.module || "users");
+}
+
+function showApp() {
   $("view-login").classList.add("hidden");
   $("view-app").classList.remove("hidden");
   const user = currentUser();
   $("topPhone").textContent = user ? maskPhone(user.account) : "";
-  goPage(page || "users");
+  applyEntryRoute();
 }
 
-function goPage(name, userId) {
+function goPage(name, arg) {
+  const navPage = name === "detail" ? "users" : name;
   document.querySelectorAll(".nav-item").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.page === (name === "detail" ? "users" : name));
+    btn.classList.toggle("active", btn.dataset.page === navPage);
   });
   $("view-users").classList.toggle("hidden", name !== "users");
   $("view-detail").classList.toggle("hidden", name !== "detail");
-  $("view-placeholder").classList.toggle("hidden", name === "users" || name === "detail");
+  $("view-class-module").classList.toggle("hidden", name !== "class");
+  $("view-notice-module").classList.toggle("hidden", name !== "notice");
+  const isPlaceholder = !["users", "detail", "class", "notice"].includes(name);
+  $("view-placeholder").classList.toggle("hidden", !isPlaceholder);
+
   if (name === "users") {
     $("crumb").innerHTML = "当前位置 / <b>用户管理</b>";
     renderTable();
   } else if (name === "detail") {
-    $("crumb").innerHTML = "当前位置 / 用户管理 / <b>详情</b>";
-    renderDetail(userId);
+    $("crumb").innerHTML = "当前位置 / 用户管理 / <b>详情查看</b>";
+    renderDetail(typeof arg === "string" ? arg : arg?.id);
+  } else if (name === "class") {
+    window.ClassModule?.open(typeof arg === "object" ? arg.tab : arg);
+  } else if (name === "notice") {
+    window.NoticeModule?.open(typeof arg === "object" ? arg : { menu: "list" });
   } else {
     const labels = {
       overview: "概况",
-      class: "班级",
       bank: "题库",
       homework: "作业",
-      notice: "公告",
       tool: "工具",
       config: "配置"
     };
     $("crumb").innerHTML = `当前位置 / <b>${labels[name] || "页面"}</b>`;
-    $("placeholderText").textContent = `「${labels[name] || name}」为演示占位，当前 Demo 仅实现登录与用户管理。`;
+    $("placeholderText").textContent = `「${labels[name] || name}」为演示占位，后续需求可在此扩展。`;
   }
 }
 
@@ -211,7 +202,7 @@ function applyFilter() {
   state.filtered = ALL_USERS.filter((u) => {
     if (archive && u.archive !== archive) return false;
     if (timeType !== "all" && (from || to)) {
-      const value = timeType === "reg" ? u.reg : u.last;
+      const value = timeType === "reg" ? u.regDisplay || u.reg : u.last;
       const ts = parseDate(value);
       if (from && ts < new Date(from).getTime()) return false;
       if (to && ts > new Date(to).getTime() + 86400000 - 1) return false;
@@ -240,7 +231,7 @@ function renderTable() {
         <td>${u.id}</td>
         <td>${u.nick}</td>
         <td>${u.phone}</td>
-        <td>${u.reg}</td>
+        <td>${u.regDisplay || u.reg}</td>
         <td>${u.last}</td>
         <td><span class="tag ${tagClass(u.archive)}">${u.archive}</span></td>
         <td><a class="link" href="#" data-id="${u.id}">详情</a></td>
@@ -259,18 +250,19 @@ function renderDetail(userId) {
   const u = ALL_USERS.find((item) => item.id === userId) || ALL_USERS[0];
   $("detailAvatar").textContent = u.nick.slice(0, 1);
   $("detailNick").textContent = u.nick;
-  $("detailAccount").textContent = `登录账号：${u.phone}`;
+  $("detailAccount").textContent = `登录账号：${u.phone.replace(/(\d{3})(\d{4})(\d{4})/, "$1 $2 $3")}`;
   $("detailId").textContent = `用户ID：${u.id}`;
   $("kvLogin").innerHTML = `
     <div class="kv"><dt>最后登录时间</dt><dd>${u.lastLoginFull}</dd></div>
     <div class="kv"><dt>最后登录IP</dt><dd>${u.ip}</dd></div>
     <div class="kv"><dt>登录地区</dt><dd>${u.region}</dd></div>
     <div class="kv"><dt>登录系统</dt><dd>${u.system}</dd></div>
-    <div class="kv"><dt>注册时间</dt><dd>2020-08-05 14:25:19</dd></div>`;
+    <div class="kv"><dt>注册时间</dt><dd>${u.reg}</dd></div>`;
   $("kvArchive").innerHTML = `
     <div class="kv"><dt>姓名</dt><dd>${u.name}</dd></div>
     <div class="kv"><dt>性别</dt><dd>${u.gender}</dd></div>
     <div class="kv"><dt>民族</dt><dd>${u.nation}</dd></div>
+    <div class="kv"><dt>户籍</dt><dd>${u.household || "-"}</dd></div>
     <div class="kv"><dt>最高学历</dt><dd>${u.education}</dd></div>
     <div class="kv"><dt>所学专业</dt><dd>${u.major}</dd></div>
     <div class="kv"><dt>持有证书情况</dt><dd>${u.cert}</dd></div>
@@ -279,7 +271,9 @@ function renderDetail(userId) {
     <div class="kv"><dt>备考方向</dt><dd>${u.direction}</dd></div>
     <div class="kv"><dt>报考身份</dt><dd>${u.identity}</dd></div>
     <div class="kv"><dt>报考特殊条件</dt><dd>${u.special}</dd></div>
-    <div class="kv"><dt>意向报考地1</dt><dd>${u.city}</dd></div>`;
+    <div class="kv"><dt>意向报考地1</dt><dd>${u.city}</dd></div>
+    <div class="kv"><dt>意向报考地2</dt><dd>${u.city2 || "-"}</dd></div>
+    <div class="kv"><dt>意向报考地3</dt><dd>${u.city3 || "-"}</dd></div>`;
 }
 
 function handleLogin(event) {
@@ -333,7 +327,7 @@ function handleLogin(event) {
   setFailCount(0);
   sessionStorage.setItem(AUTH_KEY, JSON.stringify({ account }));
   showToast("登录成功", true);
-  setTimeout(() => showApp("users"), 400);
+  setTimeout(() => showApp(), 400);
 }
 
 function bindEvents() {
@@ -392,7 +386,8 @@ function bindEvents() {
 
 function init() {
   bindEvents();
-  if (currentUser()) showApp("users");
+  storeEntryFromUrl();
+  if (currentUser()) showApp();
   else showLogin();
 }
 

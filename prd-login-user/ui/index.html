@@ -4,10 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>公考上岸 · 管理平台</title>
-  <link rel="stylesheet" href="../../css/app.css?v=20260831">
+  <link rel="stylesheet" href="../../css/app.css?v=20260920e">
 </head>
 <body>
   <div id="toast" class="toast" role="status"></div>
+  <div id="disableModal" class="modal-mask hidden">
+    <div class="modal-card">
+      <h3>账号禁用</h3>
+      <p style="font-size:13px;color:#6b7280">须填写禁用说明（限200字）。</p>
+      <textarea id="disableReason" maxlength="200" placeholder="请输入禁用说明"></textarea>
+      <div class="modal-actions">
+        <button id="cancelDisableBtn" class="btn btn-ghost" type="button">取消</button>
+        <button id="confirmDisableBtn" class="btn btn-primary" type="button">确认禁用</button>
+      </div>
+    </div>
+  </div>
 
   <section id="view-login" class="login-page">
     <div class="login-hero">
@@ -19,7 +30,7 @@
         <a class="hub-back" href="../">← 返回本需求</a>
         <div style="margin-top:48px">
           <h2>功满教育管理平台</h2>
-          <p>账号登录后进入用户管理，支持查询、分页与详情查看。</p>
+          <p>统一登录入口；登录后进入管理平台，各需求从侧栏或目录深链进入对应模块。</p>
         </div>
       </div>
       <svg class="iso" viewBox="0 0 640 360" fill="none" aria-hidden="true">
@@ -221,21 +232,98 @@
         </aside>
       </div>
 
+      <div id="view-class-module" class="hidden">
+        <div class="sub-tabs">
+          <button type="button" data-class-tab="students" class="active">学员管理</button>
+          <button type="button" data-class-tab="import">学员导入</button>
+          <button type="button" data-class-tab="campus">校区管理</button>
+          <button type="button" data-class-tab="category">班级类别</button>
+          <button type="button" data-class-tab="manage">班级管理</button>
+        </div>
+        <div id="view-class-students" class="panel">
+          <div class="filter-row">
+            <select id="filterYear"><option value="">招生年份</option><option>2027级</option><option>2026级</option></select>
+            <select id="filterRegion"><option value="">所属地区</option><option>浙江省</option><option>四川省</option></select>
+            <select id="filterCampus"><option value="">所属校区</option><option>金华校区</option><option>成都高新校区</option><option>绵阳涪城校区</option></select>
+            <select id="filterCategory"><option value="">班级类别</option><option>长效班</option><option>冲刺班</option><option>基础班</option></select>
+            <select id="filterClass"><option value="">学员班级</option><option>泰山班</option><option>华山班</option><option>衡山班</option></select>
+            <select id="filterArchive"><option value="">档案状态</option><option>待填写</option><option>已填写</option><option>已完成</option></select>
+            <select id="filterAccount"><option value="">账号状态</option><option>已启用</option><option>已禁用</option></select>
+            <input id="filterKeyword" class="grow" placeholder="姓名/手机号/学号">
+            <button id="studentSearchBtn" class="btn btn-primary" type="button">搜索</button>
+            <button id="studentResetBtn" class="btn btn-ghost" type="button">重置</button>
+          </div>
+          <div id="studentGrid" class="stu-grid"></div>
+          <div class="pager"><span id="studentTotal">共计 0 条</span></div>
+          <aside class="prd-tips"><div class="tips-head"><span class="tips-label">TIPS · 学员管理</span><span class="tips-meta">RP-5621</span></div></aside>
+        </div>
+        <div id="view-class-detail" class="panel hidden"><div class="detail-head"><div class="section-title">学员详情</div><button id="backStudentsBtn" class="btn btn-ghost" type="button">返回</button></div><div id="detailStudentKv"></div></div>
+        <div id="view-class-edit" class="panel hidden">
+          <div class="section-title">学员修改</div>
+          <div class="form-grid">
+            <label>* 姓名<input id="editName"></label><label>* 登录手机号<input id="editPhone"></label>
+            <label>学号<input id="editStudentNo" readonly></label><label>* 招生年份<select id="editYear"><option>2027级</option><option>2026级</option></select></label>
+            <label>所属地区<input id="editRegion"></label><label>* 所属校区<select id="editCampusSel"><option>金华校区</option><option>成都高新校区</option></select></label>
+            <label>* 班级类别<select id="editCategorySel"><option>长效班</option><option>冲刺班</option></select></label>
+            <label>* 学员班级<input id="editClassName"></label>
+          </div>
+          <button id="saveStudentBtn" class="btn btn-primary" type="button" style="margin-top:12px">保存</button>
+        </div>
+        <div id="view-class-import" class="panel hidden"><button id="downloadTplBtn" class="btn btn-ghost" type="button">下载模板</button><button id="importDemoBtn" class="btn btn-primary" type="button">上传导入</button></div>
+        <div id="view-class-campus" class="panel hidden"><div class="table-wrap"><table><thead><tr><th>校区</th><th>班级数</th></tr></thead><tbody><tr><td>金华校区</td><td>12</td></tr></tbody></table></div></div>
+        <div id="view-class-category" class="panel hidden"><div class="table-wrap"><table><thead><tr><th>类别</th></tr></thead><tbody><tr><td>长效班</td></tr><tr><td>冲刺班</td></tr></tbody></table></div></div>
+        <div id="view-class-manage" class="panel hidden"><div class="table-wrap"><table><thead><tr><th>班级</th><th>操作</th></tr></thead><tbody><tr><td>泰山班</td><td><button id="openH5Btn" class="link-btn" type="button">H5邀请码</button></td></tr></tbody></table></div></div>
+        <div id="view-class-h5" class="panel hidden"><p>H5 填录信息 Demo（扫码邀请）</p><div style="width:140px;height:140px;border:1px dashed #ccc;display:grid;place-items:center">QR</div></div>
+      </div>
+
+      <div id="view-notice-module" class="hidden notice-layout">
+        <nav class="notice-menu">
+          <button type="button" data-notice-sub="normal" class="active">普通公告</button>
+          <button type="button" data-notice-sub="jobtable">职位表公告</button>
+          <button type="button" data-notice-sub="jobimg">职位图公告</button>
+          <button type="button" data-notice-sub="progress">考试进度管理</button>
+          <button type="button" data-notice-sub="feedback">考试进度反馈</button>
+          <p id="subHint" style="font-size:11px;color:#9ca3af;padding:8px 12px">普通公告-原有功能</p>
+        </nav>
+        <div>
+          <div id="noticeListPanel" class="panel">
+            <div class="filter-row">
+              <select id="filterExamType"><option value="">招考类型</option><option>省考</option><option>国考</option><option>军队文职</option><option>央国企</option></select>
+              <select id="filterNoticeStatus"><option value="">公告状态</option><option>报名中</option><option>已结束</option><option>未开始</option></select>
+              <button id="noticeSearchBtn" class="btn btn-primary" type="button">搜索</button>
+              <button id="createNoticeBtn" class="btn btn-primary" type="button">+ 信息/修改发布</button>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>标题</th><th>类型</th><th>状态</th><th>招录人数</th><th>订阅</th><th>浏览量</th><th>时间</th><th>操作</th></tr></thead><tbody id="noticeTableBody"></tbody></table></div>
+          </div>
+          <div id="noticeFormPanel" class="panel hidden">
+            <div class="form-grid">
+              <label class="full">* 标题<input id="formTitle"></label>
+              <label>* 招考信息<select id="formExamType"><option>省考</option><option>国考</option><option>军队文职</option></select></label>
+              <label>* 招考人数<input id="formRecruit"></label>
+              <label>* 招考地区<input id="formRegion"></label>
+              <label>* 信息来源<input id="formSource"></label>
+              <label>* 原文来源<input id="formOrigin"></label>
+              <label class="full">原文地址<input id="formUrl"></label>
+              <label class="full">正文<textarea id="formBody" rows="6"></textarea></label>
+            </div>
+            <div class="toolbar-row"><button id="saveDraftBtn" class="btn btn-ghost" type="button">存草稿</button><button id="publishNoticeBtn" class="btn btn-primary" type="button">发布</button><button id="backNoticeListBtn" class="btn btn-ghost" type="button">返回</button></div>
+          </div>
+          <div id="noticeDetailPanel" class="panel hidden"><div class="detail-head"><div class="section-title">查看详情</div><button class="btn btn-ghost back-notice-list" type="button">返回</button></div><div id="noticeDetailKv"></div></div>
+          <div id="noticeProgressPanel" class="panel hidden"><p id="progressHint">考试进度管理 Demo</p><button class="btn btn-ghost back-notice-list" type="button">返回</button></div>
+        </div>
+      </div>
+
       <div id="view-placeholder" class="panel placeholder hidden">
         <div>
           <p id="placeholderText">该模块为演示占位。</p>
-          <aside class="prd-tips" style="text-align:left;max-width:560px;margin:16px auto 0">
-            <div class="tips-head">
-              <span class="tips-label">TIPS · 模块待补充</span>
-              <span class="tips-meta">Demo</span>
-            </div>
-            当前仅实现登录与用户管理。概况 / 班级 / 题库等模块需求确认后，在此追加 PRD 记录。
-          </aside>
         </div>
       </div>
     </main>
   </section>
 
+  <script src="../../js/users-data.js"></script>
+  <script src="../../js/app-class-student.js?v=20260920e"></script>
+  <script src="../../js/app-notice-list.js"></script>
   <script src="../../js/app.js"></script>
 </body>
 </html>
