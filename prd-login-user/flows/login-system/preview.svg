@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 980" width="760" height="980">
+  <title>登录鉴权系统流程</title>
+  <style>
+    .state { fill: #eff6ff; stroke: #2563eb; stroke-width: 2; }
+    .proc { fill: #fff; stroke: #64748b; stroke-width: 1.4; }
+    .dec { fill: #fefce8; stroke: #ca8a04; stroke-width: 1.4; }
+    .err { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.4; }
+    .stop { fill: #fef2f2; stroke: #dc2626; stroke-width: 1.6; }
+    .ok { fill: #ecfdf5; stroke: #16a34a; stroke-width: 1.6; }
+    .label { font: 13px sans-serif; fill: #1e293b; text-anchor: middle; }
+    .small { font: 11px sans-serif; fill: #475569; text-anchor: middle; }
+    .left { text-anchor: start; }
+    .arrow { stroke: #64748b; stroke-width: 1.4; fill: none; marker-end: url(#arrow); }
+    .dash { stroke-dasharray: 5 4; }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect width="760" height="980" fill="#f8fafc"/>
+  <text x="380" y="28" font-size="18" font-weight="700" fill="#1e3a8a" text-anchor="middle">登录 + 用户管理 · 系统流程图</text>
+  <text x="380" y="50" font-size="12" fill="#64748b" text-anchor="middle">状态流转、校验顺序与异常处理 (与原型 sessionStorage 失败计数一致)</text>
+
+  <rect x="300" y="68" width="160" height="44" rx="22" class="state"/>
+  <text x="380" y="95" class="label">状态: 未登录</text>
+  <line x1="380" y1="112" x2="380" y2="138" class="arrow"/>
+  <rect x="270" y="140" width="220" height="40" rx="8" class="proc"/>
+  <text x="380" y="165" class="label">事件: 点击「账号登录」</text>
+  <line x1="380" y1="180" x2="380" y2="206" class="arrow"/>
+  <polygon points="380,208 480,248 380,288 280,248" class="dec"/>
+  <text x="380" y="244" class="label">failCount &gt;= 5 ?</text>
+  <line x1="480" y1="248" x2="560" y2="248" class="arrow"/>
+  <rect x="564" y="224" width="160" height="48" rx="8" class="stop"/>
+  <text x="644" y="244" class="small">异常: 账号已禁用</text>
+  <text x="644" y="260" class="small">提示 + 按钮抖动</text>
+  <text x="644" y="276" class="small">刷新验证码, 停留未登录</text>
+  <path d="M644 272 L644 320 380 320 380 288" class="arrow dash"/>
+  <line x1="380" y1="288" x2="380" y2="314" class="arrow"/>
+  <text x="394" y="306" class="small left">否</text>
+  <rect x="270" y="316" width="220" height="36" rx="8" class="proc"/>
+  <text x="380" y="339" class="label">校验: 账号 / 密码 / 验证码非空</text>
+  <line x1="380" y1="352" x2="380" y2="378" class="arrow"/>
+  <polygon points="380,380 500,420 380,460 260,420" class="dec"/>
+  <text x="380" y="416" class="label">验证码匹配?</text>
+  <line x1="500" y1="420" x2="590" y2="420" class="arrow"/>
+  <rect x="594" y="396" width="150" height="48" rx="8" class="err"/>
+  <text x="669" y="416" class="small">异常: 验证码错误</text>
+  <text x="669" y="432" class="small">清空验证码输入</text>
+  <text x="669" y="448" class="small">刷新图形码 + 抖动</text>
+  <path d="M669 444 L669 500 200 500 200 420 260 420" class="arrow dash"/>
+  <line x1="380" y1="460" x2="380" y2="486" class="arrow"/>
+  <text x="394" y="478" class="small left">是</text>
+  <polygon points="380,488 500,528 380,568 260,528" class="dec"/>
+  <text x="380" y="524" class="label">账号密码正确?</text>
+  <line x1="500" y1="528" x2="590" y2="528" class="arrow"/>
+  <rect x="594" y="492" width="150" height="72" rx="8" class="err"/>
+  <text x="669" y="512" class="small">异常: 认证失败</text>
+  <text x="669" y="528" class="small">failCount += 1</text>
+  <text x="669" y="544" class="small">提示 n/5 或满 5 次禁用</text>
+  <text x="669" y="560" class="small">刷新验证码 + 抖动</text>
+  <path d="M669 564 L669 610 200 610 200 528 260 528" class="arrow dash"/>
+  <line x1="380" y1="568" x2="380" y2="594" class="arrow"/>
+  <text x="394" y="586" class="small left">是</text>
+  <rect x="260" y="596" width="240" height="44" rx="8" class="proc"/>
+  <text x="380" y="623" class="label">failCount 置 0; 写入登录会话</text>
+  <line x1="380" y1="640" x2="380" y2="666" class="arrow"/>
+  <rect x="280" y="668" width="200" height="44" rx="22" class="ok"/>
+  <text x="380" y="695" class="label">状态: 已登录</text>
+  <line x1="380" y1="712" x2="380" y2="738" class="arrow"/>
+  <rect x="220" y="740" width="320" height="48" rx="8" class="proc"/>
+  <text x="380" y="762" class="label">渲染管理端 shell</text>
+  <text x="380" y="778" class="small">按 entry 参数进入用户/班级/公告模块</text>
+  <line x1="380" y1="788" x2="380" y2="814" class="arrow"/>
+  <rect x="240" y="816" width="280" height="44" rx="8" class="proc"/>
+  <text x="380" y="843" class="label">用户管理: 列表 / 筛选 / 详情</text>
+  <line x1="380" y1="860" x2="380" y2="886" class="arrow"/>
+  <rect x="270" y="888" width="220" height="40" rx="8" class="proc"/>
+  <text x="380" y="913" class="label">事件: 退出登录</text>
+  <line x1="380" y1="928" x2="380" y2="948" class="arrow"/>
+  <path d="M380 948 L380 968 L120 968 L120 90 L300 90" class="arrow dash"/>
+  <text x="130" y="960" class="small left">清除会话, 回到未登录</text>
+
+  <rect x="24" y="140" width="200" height="120" rx="8" fill="#fff" stroke="#cbd5e1"/>
+  <text x="124" y="164" class="label">状态说明</text>
+  <text x="36" y="188" class="small left">未登录: 仅登录页可见</text>
+  <text x="36" y="206" class="small left">已登录: session 有效</text>
+  <text x="36" y="224" class="small left">failCount: 0~5 (会话级)</text>
+  <text x="36" y="242" class="small left">满 5 次: 锁定态, 拒绝登录</text>
+</svg>

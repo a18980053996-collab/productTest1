@@ -1,0 +1,221 @@
+app:
+  description: 把一次坏答案定位到 模型 / Prompt / 知识 / 检索 / 流程。对应岗位要求第 3 条。
+  icon: 🩺
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: Demo3-失效分层诊断
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/ollama:1.0.2@ef203a332d1b2b8952dbaa012be70be3e0a2d576b001489fb3b070efc970ffbe
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      enabled: false
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: start-source-llm
+      source: start
+      sourceHandle: source
+      target: llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: llm-source-end
+      source: llm
+      sourceHandle: source
+      target: end
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 失败样本
+        type: start
+        variables:
+        - label: 用户问题
+          max_length: 1000
+          options: []
+          required: true
+          type: paragraph
+          variable: question
+        - label: 模型实际回答
+          max_length: 2000
+          options: []
+          required: true
+          type: paragraph
+          variable: answer
+        - label: 这次检索到的知识
+          max_length: 4000
+          options: []
+          required: true
+          type: paragraph
+          variable: retrieved
+        - label: 当时的 Prompt 要点
+          max_length: 2000
+          options: []
+          required: true
+          type: paragraph
+          variable: prompt_notes
+        - label: 流程备注
+          max_length: 1000
+          options: []
+          required: false
+          type: paragraph
+          variable: process_notes
+      height: 90
+      id: start
+      position:
+        x: 30
+        y: 180
+      positionAbsolute:
+        x: 30
+        y: 180
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 练习：先给定义再判断，避免空泛说「模型不好」
+        model:
+          completion_params:
+            temperature: 0.2
+            num_predict: 512
+            think: false
+          mode: chat
+          name: qwen3.5:2b
+          provider: langgenius/ollama/ollama
+        prompt_template:
+        - role: system
+          text: '你是 AI 应用值班产品经理。根据一次失败样本，判断问题出在哪一层。只能选一层作为主因。
+
+
+            五层定义（必须按这个标准，不要发明新层）：
+
+            1. 模型：知识正确、Prompt 也约束了，但模型把事实说错或格式崩了
+
+            2. Prompt：指令在逼模型编造、没要求引用、或角色冲突
+
+            3. 知识：该写进知识库的事实根本没有，或写错了
+
+            4. 检索：完整知识库里有答案，但这次召回的片段没有
+
+            5. 流程：不该进这个节点（该分流、该拒答、该人工确认）却走了
+
+
+            直接输出下面 5 行，不要分析过程：
+
+            主因层：模型 / Prompt / 知识 / 检索 / 流程  （只写一个）
+
+            证据：
+
+            为什么不是相邻层：
+
+            改哪一处：
+
+            复测题：'
+        - role: user
+          text: '用户问题：
+
+            {{#start.question#}}
+
+
+            模型实际回答：
+
+            {{#start.answer#}}
+
+
+            这次检索到的知识：
+
+            {{#start.retrieved#}}
+
+
+            当时的 Prompt 要点：
+
+            {{#start.prompt_notes#}}
+
+
+            流程备注（可空）：
+
+            {{#start.process_notes#}}'
+        selected: false
+        title: 定位失效层
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: llm
+      position:
+        x: 334
+        y: 180
+      positionAbsolute:
+        x: 334
+        y: 180
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - llm
+          - text
+          value_type: string
+          variable: diagnosis
+        selected: false
+        title: 输出
+        type: end
+      height: 90
+      id: end
+      position:
+        x: 638
+        y: 180
+      positionAbsolute:
+        x: 638
+        y: 180
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.7

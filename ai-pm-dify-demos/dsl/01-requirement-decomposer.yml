@@ -1,0 +1,197 @@
+app:
+  description: 把模糊的「要一个AI助手」拆成 Agent / Skill / Workflow / 工具 / 知识 / 评价指标。对应岗位要求第 1 条。
+  icon: 🧭
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: Demo1-需求拆解器
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/ollama:1.0.2@ef203a332d1b2b8952dbaa012be70be3e0a2d576b001489fb3b070efc970ffbe
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      enabled: false
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: start-source-llm
+      source: start
+      sourceHandle: source
+      target: llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: llm-source-end
+      source: llm
+      sourceHandle: source
+      target: end
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 用户输入
+        type: start
+        variables:
+        - label: 业务场景
+          options:
+          - 客服
+          - 销售
+          - 研发
+          - 运营
+          - 风控
+          - 知识管理
+          required: true
+          type: select
+          variable: scene
+        - label: 模糊需求
+          max_length: 2000
+          options: []
+          required: true
+          type: paragraph
+          variable: request
+      height: 90
+      id: start
+      position:
+        x: 30
+        y: 240
+      positionAbsolute:
+        x: 30
+        y: 240
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: Prompt 设计练习：结构化输出 + 禁止编造
+        model:
+          completion_params:
+            temperature: 0.2
+            num_predict: 512
+            think: false
+          mode: chat
+          name: qwen3.5:2b
+          provider: langgenius/ollama/ollama
+        prompt_template:
+        - role: system
+          text: '你是一名 AI 产品经理。用户会丢来一句很模糊的「我们要做一个 AI 助手」。
+
+            你的任务不是写代码，而是把这句话拆成可以立项、可以编排、可以验收的规格。
+
+
+            硬性要求：
+
+            1. 只根据用户描述拆解，缺信息就写「待澄清：……」，禁止编造客户没有说的系统。
+
+            2. 必须区分：Agent（谁来决策）/ Skill（可复用能力）/ Workflow（固定步骤）/ 工具 / 知识依赖 / 评价指标。
+
+            3. 写操作（改数据、发消息、退款）默认要人工确认。
+
+            4. 直接输出，不要分析过程，不要 markdown 代码块。
+
+
+            按下面 8 段原样输出，每段一行标题：
+
+            【场景】一句话
+
+            【Agent角色】职责 + 不能做的事
+
+            【Skill】2-5 个可复用能力
+
+            【Workflow】3-6 个固定步骤，用 1. 2. 3.
+
+            【工具】每个工具写：读/写 + 要不要人工确认
+
+            【知识依赖】文档从哪来，没有就不能上线
+
+            【评价指标】至少 4 个，能量化
+
+            【待澄清】至少 2 个问题'
+        - role: user
+          text: '业务场景：{{#start.scene#}}
+
+            模糊需求：{{#start.request#}}
+
+
+            请按系统要求拆解。'
+        selected: false
+        title: 拆解规格
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: llm
+      position:
+        x: 334
+        y: 240
+      positionAbsolute:
+        x: 334
+        y: 240
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - llm
+          - text
+          value_type: string
+          variable: spec
+        selected: false
+        title: 输出
+        type: end
+      height: 90
+      id: end
+      position:
+        x: 638
+        y: 240
+      positionAbsolute:
+        x: 638
+        y: 240
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.7

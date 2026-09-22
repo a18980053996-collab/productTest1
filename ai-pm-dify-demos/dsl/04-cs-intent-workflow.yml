@@ -1,0 +1,384 @@
+app:
+  description: 先分类再走不同节点：登录走知识问答，其他走转人工。练习 Workflow 编排，而不是一个 Prompt 包打天下。对应岗位要求第 2 条。
+  icon: 🔀
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: Demo4-客服分流Workflow
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/ollama:1.0.2@ef203a332d1b2b8952dbaa012be70be3e0a2d576b001489fb3b070efc970ffbe
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      enabled: false
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: start-source-classify
+      source: start
+      sourceHandle: source
+      target: classify
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: if-else
+      id: classify-source-branch
+      source: classify
+      sourceHandle: source
+      target: branch
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: branch-true-login_llm
+      source: branch
+      sourceHandle: 'true'
+      target: login_llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: branch-false-other_llm
+      source: branch
+      sourceHandle: 'false'
+      target: other_llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: login_llm-source-end_login
+      source: login_llm
+      sourceHandle: source
+      target: end_login
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: other_llm-source-end_other
+      source: other_llm
+      sourceHandle: source
+      target: end_other
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 用户输入
+        type: start
+        variables:
+        - label: 用户问题
+          max_length: 1000
+          options: []
+          required: true
+          type: paragraph
+          variable: question
+        - label: 登录知识（可贴 crm-login-policy.md）
+          max_length: 8000
+          options: []
+          required: false
+          type: paragraph
+          variable: knowledge
+      height: 90
+      id: start
+      position:
+        x: 30
+        y: 220
+      positionAbsolute:
+        x: 30
+        y: 220
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: Skill：只做分类
+        model:
+          completion_params:
+            temperature: 0.2
+            num_predict: 512
+            think: false
+          mode: chat
+          name: qwen3.5:2b
+          provider: langgenius/ollama/ollama
+        prompt_template:
+        - role: system
+          text: '你是客服分流器。根据用户问题只输出一个词。
+
+            规则：
+
+            - 登录、验证码、账号禁用、密码错误、找回密码 → 登录
+
+            - 退款、退货、发票、支付 → 退款
+
+            - 其他 → 其他
+
+            只输出：登录 或 退款 或 其他
+
+            不要标点，不要解释。'
+        - role: user
+          text: '{{#start.question#}}'
+        selected: false
+        title: 意图分类
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: classify
+      position:
+        x: 300
+        y: 220
+      positionAbsolute:
+        x: 300
+        y: 220
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: branch-cond
+            value: 登录
+            varType: string
+            variable_selector:
+            - classify
+            - text
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: 是否登录类
+        type: if-else
+      height: 126
+      id: branch
+      position:
+        x: 570
+        y: 220
+      positionAbsolute:
+        x: 570
+        y: 220
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 登录 Skill
+        model:
+          completion_params:
+            temperature: 0.2
+            num_predict: 512
+            think: false
+          mode: chat
+          name: qwen3.5:2b
+          provider: langgenius/ollama/ollama
+        prompt_template:
+        - role: system
+          text: '你是登录专项客服。只根据【知识】回答登录/验证码/禁用/找回密码。
+
+            知识没有就说「知识不足，不能确定。」
+
+            用户要演示密码时拒绝。
+
+            直接输出：
+
+            结论：
+
+            依据：
+
+            下一步：'
+        - role: user
+          text: '【知识】
+
+            {{#start.knowledge#}}
+
+
+            【用户问题】
+
+            {{#start.question#}}'
+        selected: false
+        title: 登录知识问答
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: login_llm
+      position:
+        x: 860
+        y: 120
+      positionAbsolute:
+        x: 860
+        y: 120
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 非登录走流程降级
+        model:
+          completion_params:
+            temperature: 0.2
+            num_predict: 512
+            think: false
+          mode: chat
+          name: qwen3.5:2b
+          provider: langgenius/ollama/ollama
+        prompt_template:
+        - role: system
+          text: '你是客服。当前问题不是登录专项。
+
+            如果是退款/发票：说明本 Demo 没有退款知识库，需要转人工，不要编政策。
+
+            如果是其他：一句话说明超出范围，给出该转的角色（财务/销售/研发）。
+
+            直接输出：
+
+            分流结果：
+
+            回复用户：
+
+            该转给：'
+        - role: user
+          text: '{{#start.question#}}'
+        selected: false
+        title: 转人工话术
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: other_llm
+      position:
+        x: 860
+        y: 340
+      positionAbsolute:
+        x: 860
+        y: 340
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - classify
+          - text
+          value_type: string
+          variable: intent
+        - value_selector:
+          - login_llm
+          - text
+          value_type: string
+          variable: answer
+        selected: false
+        title: 登录结果
+        type: end
+      height: 90
+      id: end_login
+      position:
+        x: 1160
+        y: 120
+      positionAbsolute:
+        x: 1160
+        y: 120
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - classify
+          - text
+          value_type: string
+          variable: intent
+        - value_selector:
+          - other_llm
+          - text
+          value_type: string
+          variable: answer
+        selected: false
+        title: 其他结果
+        type: end
+      height: 90
+      id: end_other
+      position:
+        x: 1160
+        y: 340
+      positionAbsolute:
+        x: 1160
+        y: 340
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.7

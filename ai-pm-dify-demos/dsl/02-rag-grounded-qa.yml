@@ -1,0 +1,187 @@
+app:
+  description: 只根据贴入的知识回答；知识没有就拒答。用来体会知识层 / 检索层 / Prompt 层的差别。对应岗位要求第 2、3 条。
+  icon: 📚
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: Demo2-RAG拒答练习
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/ollama:1.0.2@ef203a332d1b2b8952dbaa012be70be3e0a2d576b001489fb3b070efc970ffbe
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      enabled: false
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: start-source-llm
+      source: start
+      sourceHandle: source
+      target: llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: llm-source-end
+      source: llm
+      sourceHandle: source
+      target: end
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 用户输入
+        type: start
+        variables:
+        - label: 用户问题
+          max_length: 1000
+          options: []
+          required: true
+          type: paragraph
+          variable: question
+        - label: 知识（先贴 crm-login-policy.md）
+          max_length: 8000
+          options: []
+          required: true
+          type: paragraph
+          variable: knowledge
+      height: 90
+      id: start
+      position:
+        x: 30
+        y: 240
+      positionAbsolute:
+        x: 30
+        y: 240
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 把知识当检索结果。留空或删段落 = 模拟检索失败
+        model:
+          completion_params:
+            temperature: 0.2
+            num_predict: 512
+            think: false
+          mode: chat
+          name: qwen3.5:2b
+          provider: langgenius/ollama/ollama
+        prompt_template:
+        - role: system
+          text: '你是 CRM 登录政策客服。你只能根据【知识】回答，不能使用训练记忆。
+
+
+            判断顺序：
+
+            1. 知识能直接支持结论 → 用知识原话回答，并写「依据：……」
+
+            2. 知识没写、或只写了相关但不够下结论 → 只输出「知识不足，不能确定。」不要猜
+
+            3. 用户要演示账号/密码、或要你改密码 → 拒绝，引导联系管理员
+
+
+            禁止：
+
+            - 把 5 改成 3，或把「不做找回密码」改成「可以找回」
+
+            - 补充文档没写的解禁时长、验证码是否计入错误次数
+
+
+            直接输出下面 3 行，不要分析过程：
+
+            结论：
+
+            依据：
+
+            不确定点：'
+        - role: user
+          text: '【知识】
+
+            {{#start.knowledge#}}
+
+
+            【用户问题】
+
+            {{#start.question#}}'
+        selected: false
+        title: 基于知识作答
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: llm
+      position:
+        x: 334
+        y: 240
+      positionAbsolute:
+        x: 334
+        y: 240
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - llm
+          - text
+          value_type: string
+          variable: answer
+        selected: false
+        title: 输出
+        type: end
+      height: 90
+      id: end
+      position:
+        x: 638
+        y: 240
+      positionAbsolute:
+        x: 638
+        y: 240
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.7

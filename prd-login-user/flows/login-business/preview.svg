@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" width="720" height="520">
+  <title>登录与用户管理业务流程</title>
+  <style>
+    .box { fill: #fff; stroke: #3b82f6; stroke-width: 1.6; }
+    .start { fill: #eff6ff; stroke: #3b82f6; }
+    .ok { fill: #ecfdf5; stroke: #10b981; }
+    .label { font: 14px sans-serif; fill: #1f2937; text-anchor: middle; }
+    .small { font: 12px sans-serif; fill: #6b7280; text-anchor: middle; }
+    .arrow { stroke: #64748b; stroke-width: 1.6; fill: none; marker-end: url(#arrow); }
+    .left { text-anchor: start; }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect width="720" height="520" fill="#f8fafc"/>
+  <text x="360" y="28" font-size="18" font-weight="700" fill="#1e3a8a" text-anchor="middle">登录 + 用户管理 · 业务流程图</text>
+  <text x="360" y="50" font-size="12" fill="#64748b" text-anchor="middle">面向角色: 管理端运营 / 管理员</text>
+  <rect x="280" y="68" width="160" height="48" rx="24" class="start"/>
+  <text x="360" y="98" class="label">开始: 访问管理平台</text>
+  <line x1="360" y1="116" x2="360" y2="148" class="arrow"/>
+  <rect x="240" y="150" width="240" height="56" rx="8" class="box"/>
+  <text x="360" y="176" class="label">打开登录页</text>
+  <text x="360" y="194" class="small">填写账号、密码、图形验证码</text>
+  <line x1="360" y1="206" x2="360" y2="238" class="arrow"/>
+  <rect x="220" y="240" width="280" height="56" rx="8" class="box"/>
+  <text x="360" y="266" class="label">提交登录</text>
+  <text x="360" y="284" class="small">校验通过后进入后台</text>
+  <line x1="360" y1="296" x2="360" y2="328" class="arrow"/>
+  <rect x="200" y="330" width="320" height="56" rx="8" class="ok"/>
+  <text x="360" y="356" class="label">进入用户管理列表</text>
+  <text x="360" y="374" class="small">默认展示用户卡片列表</text>
+  <line x1="360" y1="386" x2="360" y2="418" class="arrow"/>
+  <rect x="160" y="420" width="400" height="72" rx="8" class="box"/>
+  <text x="360" y="448" class="label">查询 / 筛选 / 分页</text>
+  <text x="360" y="468" class="small">按手机号、姓名、档案状态等条件检索</text>
+  <text x="360" y="484" class="small">点击「详情」查看用户档案与登录信息</text>
+  <rect x="520" y="330" width="160" height="48" rx="8" class="box"/>
+  <text x="600" y="350" class="small">登录失败</text>
+  <text x="600" y="368" class="small">按提示修正后重试</text>
+  <path d="M360 240 L520 240 520 354" class="arrow"/>
+  <text x="430" y="232" class="small">否</text>
+  <path d="M600 378 L600 268 500 268" class="arrow"/>
+  <rect x="40" y="150" width="140" height="72" rx="8" fill="#fff7ed" stroke="#f97316"/>
+  <text x="110" y="178" class="small">业务规则</text>
+  <text x="110" y="198" class="small left" transform="translate(20,0)">暂不做找回密码</text>
+  <text x="110" y="214" class="small left" transform="translate(20,0)">由后台重置密码</text>
+</svg>
